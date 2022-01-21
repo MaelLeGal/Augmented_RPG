@@ -12,9 +12,18 @@ using Emgu.CV.Util;
 public class PlaceAsset : MonoBehaviour
 {
     public GameObject orc;
+    public List<GameObject> listObject;
 
-    static void displayAsset(VectorOfPointF pointMarqueur, GameObject character)
+    Dictionary dictMarkers = new Dictionary(Dictionary.PredefinedDictionaryName.Dict6X6_250);
+
+    public void displayAsset(VectorOfPointF pointMarqueur, int marqueurID)
     {
-       // pointMarqueur.
+       
+    }
+    public void displayAsset(Mat rotvectors, Mat transvectors, int marqueurID)
+    {
+        Debug.Log(transvectors.GetData().GetValue(0,0,0));
+        Debug.Log(transvectors.GetData().GetValue(0,0,1));
+        Debug.Log(transvectors.GetData().GetValue(0,0,2));
     }
 }

@@ -12,6 +12,8 @@ using Emgu.CV.Util;
 
 public class WebcamCapture : MonoBehaviour
 {
+    public PlaceAsset placement;
+
     public RawImage webcamScreen;
     public int width, height;
 
@@ -82,10 +84,11 @@ public class WebcamCapture : MonoBehaviour
 
             for(int i = 0; i < transformationVector.Item1.Size.Height; ++i)
             {
-                Debug.Log(transformationVector.Item1.Size.Width);
                 Mat rvec = transformationVector.Item1.Row(i);
                 Mat tvec = transformationVector.Item2.Row(i);
                 ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
+                placement.displayAsset(rvec, tvec, markersInfo.Item2[i]);
+                //Debug.Log(markersInfo.Item2[i]);
             }
         }
 

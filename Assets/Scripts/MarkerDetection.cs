@@ -12,10 +12,6 @@ using Emgu.CV.Util;
 
 public class MarkerDetection
 {
-    public MarkerDetection()
-    {
-    }
-
     public (VectorOfVectorOfPointF, VectorOfInt) Detect(Mat image) {
         // Markers ID
         VectorOfInt markersID = new VectorOfInt();
@@ -34,10 +30,13 @@ public class MarkerDetection
         // detect markers
         ArucoInvoke.DetectMarkers(grayFrame, dictMarkers, markersCorner, markersID, parameters, rejectedCandidates);
 
+        /*
+        //debug
         if (markersID.Size > 0)
         {
             Debug.Log("Markers found");
         }
+        */
 
         return (markersCorner, markersID);
     }
