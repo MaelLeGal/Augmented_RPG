@@ -25,7 +25,7 @@ public class WebcamCapture : MonoBehaviour
     private PoseEstimation poseEstimationInstance = new PoseEstimation();
     private CalibrateCamera callibInstance = new CalibrateCamera();
 
-    private int numberOfCalibratingFrames = 250;
+    private int numberOfCalibratingFrames = 0;
     private int currentNumberOfCalibratingFrames = 0;
 
     // Start is called before the first frame update
@@ -80,8 +80,9 @@ public class WebcamCapture : MonoBehaviour
             poseEstimationInstance.MarkerSize = 0.5f;
             (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
 
-            for(int i = 0; i < transformationVector.Item1.Size.Width; ++i)
+            for(int i = 0; i < transformationVector.Item1.Size.Height; ++i)
             {
+                Debug.Log(transformationVector.Item1.Size.Width);
                 Mat rvec = transformationVector.Item1.Row(i);
                 Mat tvec = transformationVector.Item2.Row(i);
                 ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
@@ -98,6 +99,7 @@ public class WebcamCapture : MonoBehaviour
         CvInvoke.Resize(webcamCapture, webcamCapture, new System.Drawing.Size(width, height));
         CvInvoke.CvtColor(webcamCapture, webcamCapture, ColorConversion.Bgr2Rgba);
         CvInvoke.Flip(webcamCapture, webcamCapture, FlipType.Vertical);
+
 
         Texture2D tex = webcamCapture.ToTexture2D();
 
