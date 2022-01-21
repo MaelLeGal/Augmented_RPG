@@ -23,6 +23,10 @@ public class WebcamCapture : MonoBehaviour
 
     private MarkerDetection markerDetectionInstance = new MarkerDetection();
     private PoseEstimation poseEstimationInstance = new PoseEstimation();
+    private CalibrateCamera callibInstance = new CalibrateCamera();
+
+    private int numberOfCalibratingFrames = 250;
+    private int currentNumberOfCalibratingFrames = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -32,13 +36,6 @@ public class WebcamCapture : MonoBehaviour
 
             webcam.ImageGrabbed += HandleWebcamQueryFrame;
             webcam.Start();
-
-            CalibrateCamera callibInstance = new CalibrateCamera();
-            (Mat, Mat) camParams = callibInstance.Calibrate("/Assets/Resources/cameraParameters.xml");
-            cameraMatrix = camParams.Item1;
-            distCoeffs = camParams.Item2;
-            poseEstimationInstance.CameraMatrix = cameraMatrix;
-            poseEstimationInstance.DistCoeffs = distCoeffs;
         }
 
         
@@ -67,10 +64,33 @@ public class WebcamCapture : MonoBehaviour
     private void HandleWebcamQueryFrame(object sender, System.EventArgs e)
     {
         webcam.Retrieve(webcamCapture);
-        (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
-        poseEstimationInstance.MarkersCorners = markersInfo.Item1;
-        poseEstimationInstance.MarkerSize = 0.5f;
-        //poseEstimationInstance.Estimate();
+        if(currentNumberOfCalibratingFrames <= numberOfCalibratingFrames)
+        {
+            (Mat, Mat) camParams = callibInstance.Calibrate(webcamCapture);
+            cameraMatrix = camParams.Item1;
+            distCoeffs = camParams.Item2;
+            poseEstimationInstance.CameraMatrix = cameraMatrix;
+            poseEstimationInstance.DistCoeffs = distCoeffs;
+            currentNumberOfCalibratingFrames += 1;
+        }
+        else
+        {
+            (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
+            poseEstimationInstance.MarkersCorners = markersInfo.Item1;
+            poseEstimationInstance.MarkerSize = 0.5f;
+            (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
+
+            for(int i = 0; i < transformationVector.Item1.Size.Width; ++i)
+            {
+                Mat rvec = transformationVector.Item1.Row(i);
+                Mat tvec = transformationVector.Item2.Row(i);
+                ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
+            }
+        }
+
+        System.Threading.Thread.Sleep(100);
+
+        
     }
 
     private void DisplayFrameOnPlane()

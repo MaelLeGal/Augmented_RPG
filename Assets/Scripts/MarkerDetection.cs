@@ -32,7 +32,7 @@ public class MarkerDetection
         Mat grayFrame = new Mat(image.Width, image.Height, DepthType.Cv8U, 1);
         CvInvoke.CvtColor(image, grayFrame, ColorConversion.Bgr2Gray);
         // detect markers
-        ArucoInvoke.DetectMarkers(image, dictMarkers, markersCorner, markersID, parameters, rejectedCandidates);
+        ArucoInvoke.DetectMarkers(grayFrame, dictMarkers, markersCorner, markersID, parameters, rejectedCandidates);
 
         if (markersID.Size > 0)
         {
