@@ -34,6 +34,11 @@ public class MarkerDetection
         // detect markers
         ArucoInvoke.DetectMarkers(image, dictMarkers, markersCorner, markersID, parameters, rejectedCandidates);
 
+        if (markersID.Size > 0)
+        {
+            Debug.Log("Markers found");
+        }
+
         return (markersCorner, markersID);
     }
 }

@@ -33,10 +33,12 @@ public class PoseEstimation
         distCoeffs = distCoeffs_;
     }
 
-    public void Estimate()
+    public (Mat, Mat) Estimate()
     {
         Mat rvecs = new Mat(); // Rotation Vectors for each marker
         Mat tvecs = new Mat(); // Translation Vectors for each marker
         ArucoInvoke.EstimatePoseSingleMarkers(markersCorners, markerSize, cameraMatrix, distCoeffs, rvecs, tvecs);
+
+        return (rvecs, tvecs);
     }
 }

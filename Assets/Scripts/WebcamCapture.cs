@@ -7,6 +7,8 @@ using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
+using Emgu.CV.Aruco;
+using Emgu.CV.Util;
 
 public class WebcamCapture : MonoBehaviour
 {
@@ -15,6 +17,12 @@ public class WebcamCapture : MonoBehaviour
 
     VideoCapture webcam;
     Mat webcamCapture = new Mat();
+
+    private Mat cameraMatrix;
+    private Mat distCoeffs;
+
+    private MarkerDetection markerDetectionInstance = new MarkerDetection();
+    private PoseEstimation poseEstimationInstance = new PoseEstimation();
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +34,11 @@ public class WebcamCapture : MonoBehaviour
             webcam.Start();
 
             CalibrateCamera callibInstance = new CalibrateCamera();
-            callibInstance.Calibrate("Assets/Resources/cameraParaameters.xml");
+            (Mat, Mat) camParams = callibInstance.Calibrate("/Assets/Resources/cameraParameters.xml");
+            cameraMatrix = camParams.Item1;
+            distCoeffs = camParams.Item2;
+            poseEstimationInstance.CameraMatrix = cameraMatrix;
+            poseEstimationInstance.DistCoeffs = distCoeffs;
         }
 
         
@@ -55,6 +67,10 @@ public class WebcamCapture : MonoBehaviour
     private void HandleWebcamQueryFrame(object sender, System.EventArgs e)
     {
         webcam.Retrieve(webcamCapture);
+        (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
+        poseEstimationInstance.MarkersCorners = markersInfo.Item1;
+        poseEstimationInstance.MarkerSize = 0.5f;
+        //poseEstimationInstance.Estimate();
     }
 
     private void DisplayFrameOnPlane()
