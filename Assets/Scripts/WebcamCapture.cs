@@ -92,7 +92,7 @@ public class WebcamCapture : MonoBehaviour
             }
         }
 
-        System.Threading.Thread.Sleep(100);
+        System.Threading.Thread.Sleep(200);
 
         
     }
