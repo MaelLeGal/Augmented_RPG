@@ -32,23 +32,22 @@ public class PlaceAsset : MonoBehaviour
 
         Vector3 worldPos = transform.TransformPoint(localPos);
 
-        //double[] flip = (double[])rotvectors.GetData().GetValue(0, 0);
-        //flip[1] = -flip[1];
-        //rotvectors.GetData().SetValue(flip, 0,0);
+        double flip = (double)rotvectors.GetData().GetValue(0, 0, 0);
+        flip = -flip;
+        rotvectors.GetData().SetValue(flip, 0,0,0);
 
         Mat rotMatrix = new Mat();
         CvInvoke.Rodrigues(rotvectors, rotMatrix);
 
         Vector3 forward;
-        Debug.Log(rotMatrix.GetData().GetValue(0, 0, 2).ToString());
-        forward.x = float.Parse(rotMatrix.GetData().GetValue(2, 0, 0).ToString());
-        forward.y = float.Parse(rotMatrix.GetData().GetValue(2, 1, 0).ToString());
-        forward.z = float.Parse(rotMatrix.GetData().GetValue(2, 2, 0).ToString());
+        forward.x = float.Parse(rotMatrix.GetData().GetValue(2, 0).ToString());
+        forward.y = float.Parse(rotMatrix.GetData().GetValue(2, 1).ToString());
+        forward.z = float.Parse(rotMatrix.GetData().GetValue(2, 2).ToString());
 
         Vector3 up;
-        up.x = float.Parse(rotMatrix.GetData().GetValue(1, 0, 0).ToString());
-        up.y = float.Parse(rotMatrix.GetData().GetValue(1, 1, 0).ToString());
-        up.z = float.Parse(rotMatrix.GetData().GetValue(1, 2, 0).ToString());
+        up.x = float.Parse(rotMatrix.GetData().GetValue(1, 0).ToString());
+        up.y = float.Parse(rotMatrix.GetData().GetValue(1, 1).ToString());
+        up.z = float.Parse(rotMatrix.GetData().GetValue(1, 2).ToString());
 
         Quaternion rot = Quaternion.LookRotation(forward, up);
 
@@ -56,9 +55,9 @@ public class PlaceAsset : MonoBehaviour
 
         Quaternion worldrot = transform.rotation * rot;
 
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        sphere.transform.position = worldPos;
-        sphere.transform.rotation = worldrot;
+        GameObject Capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        Capsule.transform.position = worldPos;
+        Capsule.transform.rotation = worldrot;
 
     }
 }

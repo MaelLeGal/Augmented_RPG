@@ -33,7 +33,7 @@ public class WebcamCapture : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        webcam = new VideoCapture(0);
+        webcam = new VideoCapture(1);
         if (webcam.IsOpened) {
 
             webcam.ImageGrabbed += HandleWebcamQueryFrame;
