@@ -27,13 +27,13 @@ public class WebcamCapture : MonoBehaviour
     private PoseEstimation poseEstimationInstance = new PoseEstimation();
     private CalibrateCamera callibInstance = new CalibrateCamera();
 
-    private int numberOfCalibratingFrames = 0;
+    private int numberOfCalibratingFrames = 100;
     private int currentNumberOfCalibratingFrames = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        webcam = new VideoCapture(1);
+        webcam = new VideoCapture(0);
         if (webcam.IsOpened) {
 
             webcam.ImageGrabbed += HandleWebcamQueryFrame;
@@ -74,6 +74,20 @@ public class WebcamCapture : MonoBehaviour
             poseEstimationInstance.CameraMatrix = cameraMatrix;
             poseEstimationInstance.DistCoeffs = distCoeffs;
             currentNumberOfCalibratingFrames += 1;
+
+            (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
+            poseEstimationInstance.MarkersCorners = markersInfo.Item1;
+            poseEstimationInstance.MarkerSize = 0.5f;
+            (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
+
+            for (int i = 0; i < transformationVector.Item1.Size.Height; ++i)
+            {
+                Mat rvec = transformationVector.Item1.Row(i);
+                Mat tvec = transformationVector.Item2.Row(i);
+                placement.createTerrain(rvec, tvec, markersInfo.Item2[i]);
+            }
+
+            //placement.computeTransform(transformationVector.Item1.Row(1), transformationVector.Item2.Row(1));
         }
         else
         {
@@ -87,6 +101,8 @@ public class WebcamCapture : MonoBehaviour
                 Mat rvec = transformationVector.Item1.Row(i);
                 Mat tvec = transformationVector.Item2.Row(i);
                 ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
+                //System.Drawing.PointF[] imagePoints = CvInvoke.ProjectPoints(, rvec, tvec, cameraMatrix, distCoeffs);
+
                 placement.displayAsset(rvec, tvec, markersInfo.Item2[i]);
                 //Debug.Log(markersInfo.Item2[i]);
             }
