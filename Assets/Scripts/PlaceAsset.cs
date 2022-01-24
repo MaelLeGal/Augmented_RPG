@@ -17,6 +17,8 @@ public class PlaceAsset : MonoBehaviour
 
     Dictionary dictMarkers = new Dictionary(Dictionary.PredefinedDictionaryName.Dict6X6_250);
 
+    private GameObject TerrainObj;
+
     public void createTerrain(Mat rotvectors, Mat transvectors, int markerID)
     {
         (Vector3, Quaternion) transformAsset = computeTransform(rotvectors, transvectors);
@@ -24,21 +26,20 @@ public class PlaceAsset : MonoBehaviour
         Vector3 worldPos = transformAsset.Item1;
         Quaternion worldRot = transformAsset.Item2;
 
-        GameObject TerrainObj = GameObject.CreatePrimitive(PrimitiveType.Plane);
         if (GameObject.Find("TerrainObj"))
         {
             TerrainObj = GameObject.Find("TerrainObj");
         }
         else
         {
-            TerrainObj = new GameObject("TerrainObj");
+            TerrainObj = GameObject.CreatePrimitive(PrimitiveType.Plane);
         }
 
-        worldPos.y = 0.1f;
+        worldPos.y = 1f;
 
         TerrainObj.transform.position = worldPos;
-        TerrainObj.transform.rotation = worldRot;
-        TerrainObj.transform.localScale = Vector3.one * 10;
+        TerrainObj.transform.localScale = Vector3.one * 80;
+        TerrainObj.name = "TerrainObj";
 
         /*TerrainData _TerrainData = new TerrainData();
 
@@ -176,7 +177,7 @@ public class PlaceAsset : MonoBehaviour
             alreadyInPlace[marqueurID].transform.rotation = rot;
             //alreadyInPlace[marqueurID].transform.localScale = new Vector3(scale, scale, scale);
 
-            alreadyInPlace[marqueurID].transform.up = -Camera.main.transform.forward;
+            alreadyInPlace[marqueurID].transform.up = TerrainObj.transform.up;
         }
         else
         {
@@ -192,7 +193,7 @@ public class PlaceAsset : MonoBehaviour
             //obj.transform.localScale = new Vector3(scale, scale, scale);
             alreadyInPlace.Add(marqueurID, Instantiate(obj));
 
-            obj.transform.up = -Camera.main.transform.forward;
+            obj.transform.up = TerrainObj.transform.up;
         }
     }
 }
