@@ -16,6 +16,7 @@ public class WebcamCapture : MonoBehaviour
 
     public RawImage webcamScreen;
     public int width, height;
+    public int scale = 1;
 
     VideoCapture webcam;
     Mat webcamCapture = new Mat();
@@ -27,7 +28,7 @@ public class WebcamCapture : MonoBehaviour
     private PoseEstimation poseEstimationInstance = new PoseEstimation();
     private CalibrateCamera callibInstance = new CalibrateCamera();
 
-    private int numberOfCalibratingFrames = 100;
+    private int numberOfCalibratingFrames = 50;
     private int currentNumberOfCalibratingFrames = 0;
 
     // Start is called before the first frame update
@@ -80,14 +81,25 @@ public class WebcamCapture : MonoBehaviour
             poseEstimationInstance.MarkerSize = 0.5f;
             (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
 
+            Vector3 meanPosBoard = Vector3.zero;
             for (int i = 0; i < transformationVector.Item1.Size.Height; ++i)
             {
                 Mat rvec = transformationVector.Item1.Row(i);
                 Mat tvec = transformationVector.Item2.Row(i);
                 placement.createTerrain(rvec, tvec, markersInfo.Item2[i]);
+                (Vector3, Quaternion) transformMarker = placement.computeTransform(transformationVector.Item1.Row(i), transformationVector.Item2.Row(i));
+                meanPosBoard = transformMarker.Item1;
             }
 
-            //placement.computeTransform(transformationVector.Item1.Row(1), transformationVector.Item2.Row(1));
+            if (transformationVector.Item1.Size.Height > 0)
+            {
+                meanPosBoard /= transformationVector.Item1.Size.Height;
+            }
+
+            Camera.main.transform.position = meanPosBoard + new Vector3(0,400,0);
+
+            
+
         }
         else
         {
@@ -101,14 +113,13 @@ public class WebcamCapture : MonoBehaviour
                 Mat rvec = transformationVector.Item1.Row(i);
                 Mat tvec = transformationVector.Item2.Row(i);
                 ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
-                //System.Drawing.PointF[] imagePoints = CvInvoke.ProjectPoints(, rvec, tvec, cameraMatrix, distCoeffs);
 
-                placement.displayAsset(rvec, tvec, markersInfo.Item2[i]);
+                placement.displayAsset(rvec, tvec, markersInfo.Item2[i], scale);
                 //Debug.Log(markersInfo.Item2[i]);
             }
         }
 
-        System.Threading.Thread.Sleep(200);
+        //System.Threading.Thread.Sleep(50);
 
         
     }

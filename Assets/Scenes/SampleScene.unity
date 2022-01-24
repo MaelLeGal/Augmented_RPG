@@ -217,7 +217,7 @@ Transform:
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
@@ -378,6 +378,84 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &893720706
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -62.306625
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 234.79282
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -127.529205
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123704, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123708, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: m_Name
+      value: webcamCapture
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123709, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: terrainMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 7b3b035a39b738246957cd53a2486d59, type: 2}
+    - target: {fileID: 4472441573063123710, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: scale
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123710, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: width
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123710, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: height
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4472441573063123710, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+      propertyPath: webcamScreen
+      value: 
+      objectReference: {fileID: 1490425068}
+    m_RemovedComponents:
+    - {fileID: 4472441573063123711, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: d9b5451cf3bdf034093b2d513d905ddf, type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,75 +533,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 534, z: -10}
+  m_LocalPosition: {x: 0, y: 435, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!1 &1460675517
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1460675519}
-  - component: {fileID: 1460675518}
-  - component: {fileID: 1460675520}
-  m_Layer: 0
-  m_Name: WebcamCapture
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1460675518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460675517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24284d4221a509459cda2018fd4c7f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  placement: {fileID: 1460675520}
-  webcamScreen: {fileID: 1490425068}
-  width: 500
-  height: 500
---- !u!4 &1460675519
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460675517}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 477.73624, y: 377.31155, z: -112.31456}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1460675520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460675517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82117131e09464b4b82b37e809b29952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orc: {fileID: 0}
-  listObject: []
-  terrainMaterial: {fileID: 2100000, guid: 7b3b035a39b738246957cd53a2486d59, type: 2}
 --- !u!1 &1490425067
 GameObject:
   m_ObjectHideFlags: 0

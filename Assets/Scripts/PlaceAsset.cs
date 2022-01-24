@@ -24,7 +24,7 @@ public class PlaceAsset : MonoBehaviour
         Vector3 worldPos = transformAsset.Item1;
         Quaternion worldRot = transformAsset.Item2;
 
-        GameObject TerrainObj;
+        GameObject TerrainObj = GameObject.CreatePrimitive(PrimitiveType.Plane);
         if (GameObject.Find("TerrainObj"))
         {
             TerrainObj = GameObject.Find("TerrainObj");
@@ -34,7 +34,13 @@ public class PlaceAsset : MonoBehaviour
             TerrainObj = new GameObject("TerrainObj");
         }
 
-        TerrainData _TerrainData = new TerrainData();
+        worldPos.y = 0.1f;
+
+        TerrainObj.transform.position = worldPos;
+        TerrainObj.transform.rotation = worldRot;
+        TerrainObj.transform.localScale = Vector3.one * 10;
+
+        /*TerrainData _TerrainData = new TerrainData();
 
         Debug.Log(_TerrainData);
 
@@ -49,6 +55,9 @@ public class PlaceAsset : MonoBehaviour
         TerrainCollider _TerrainCollider = TerrainObj.AddComponent<TerrainCollider>();
         Terrain _Terrain2 = TerrainObj.AddComponent<Terrain>();
 
+        _TerrainCollider = TerrainObj.GetComponent<TerrainCollider>();
+        _Terrain2 = TerrainObj.GetComponent<Terrain>();
+
         Debug.Log(_TerrainCollider);
         Debug.Log(_Terrain2);
 
@@ -56,10 +65,12 @@ public class PlaceAsset : MonoBehaviour
         _Terrain2.terrainData = _TerrainData;
         _Terrain2.materialTemplate = terrainMaterial;
 
+        worldPos.y = 0.1f;
+
         TerrainObj.transform.position = worldPos;
         TerrainObj.transform.rotation = worldRot;
 
-        //GameObject _Terrain = Terrain.CreateTerrainGameObject(_TerrainData);
+        //GameObject _Terrain = Terrain.CreateTerrainGameObject(_TerrainData);*/
 
     }
 
@@ -119,18 +130,15 @@ public class PlaceAsset : MonoBehaviour
         return (worldPos, worldRot);
     }
 
-    public void displayAsset(Mat rotvectors, Mat transvectors, int marqueurID)
+    public void displayAsset(Mat rotvectors, Mat transvectors, int marqueurID, int scale)
     {
-
-        Debug.Log(float.Parse(transvectors.GetData().GetValue(0, 0, 0).ToString()));
 
         Vector3 localPos;
         localPos.x = float.Parse(transvectors.GetData().GetValue(0, 0, 0).ToString());
         localPos.y = -float.Parse(transvectors.GetData().GetValue(0, 0, 1).ToString());
         localPos.z = float.Parse(transvectors.GetData().GetValue(0, 0, 2).ToString());
 
-        //Vector3 worldPos = transform.TransformPoint(localPos);
-
+        Vector3 worldPos = Camera.main.transform.TransformPoint(localPos);
         
         double flip = (double)rotvectors.GetData().GetValue(0, 0, 0);
         flip = -flip;
@@ -154,20 +162,37 @@ public class PlaceAsset : MonoBehaviour
 
         rot *= Quaternion.Euler(0, 0, 180);
 
-        //Quaternion worldrot = transform.rotation * rot;
+        Quaternion worldrot = Camera.main.transform.rotation * rot;
 
         if (alreadyInPlace.ContainsKey(marqueurID))
         {
             //Debug.Log("meh");
-            alreadyInPlace[marqueurID].transform.position = localPos;
+            //Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+            /*alreadyInPlace[marqueurID].transform.position = new Vector3(worldPos.x,300, worldPos.z);
+            alreadyInPlace[marqueurID].transform.rotation = Quaternion.Euler(0, worldrot.y, 0);
+            alreadyInPlace[marqueurID].transform.localScale = new Vector3(scale, scale, scale);*/
+
+            alreadyInPlace[marqueurID].transform.position = localPos * scale;
             alreadyInPlace[marqueurID].transform.rotation = rot;
+            //alreadyInPlace[marqueurID].transform.localScale = new Vector3(scale, scale, scale);
+
+            alreadyInPlace[marqueurID].transform.up = -Camera.main.transform.forward;
         }
         else
         {
             GameObject obj = listObject[marqueurID];
-            obj.transform.position = localPos;
+            //Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+            /*obj.transform.position = new Vector3(worldPos.x, 1, worldPos.z);
+            obj.transform.rotation = Quaternion.Euler(0,worldrot.y,0);
+            obj.transform.localScale = new Vector3(scale, scale, scale);
+            alreadyInPlace.Add(marqueurID, Instantiate(obj));*/
+
+            obj.transform.position = localPos * scale;
             obj.transform.rotation = rot;
+            //obj.transform.localScale = new Vector3(scale, scale, scale);
             alreadyInPlace.Add(marqueurID, Instantiate(obj));
+
+            obj.transform.up = -Camera.main.transform.forward;
         }
     }
 }
