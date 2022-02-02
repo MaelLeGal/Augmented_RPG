@@ -12,11 +12,13 @@ using Emgu.CV.Util;
 
 public class WebcamCapture : MonoBehaviour
 {
-    public PlaceAsset placement;
+    public GameObject ground;
+    private PlaceAsset placement;
+    public int scale = 10;
+    private Vector3 meanPosBoard = Vector3.zero;
 
     public RawImage webcamScreen;
     public int width, height;
-    public int scale = 1;
 
     VideoCapture webcam;
     Mat webcamCapture = new Mat();
@@ -24,24 +26,25 @@ public class WebcamCapture : MonoBehaviour
     private Mat cameraMatrix;
     private Mat distCoeffs;
 
-    private MarkerDetection markerDetectionInstance = new MarkerDetection();
-    private PoseEstimation poseEstimationInstance = new PoseEstimation();
-    private CalibrateCamera callibInstance = new CalibrateCamera();
+    [HideInInspector]
+    public MarkerDetection markerDetectionInstance = new MarkerDetection();
+    [HideInInspector]
+    public PoseEstimation poseEstimationInstance = new PoseEstimation();
+    [HideInInspector]
+    public CalibrateCamera callibInstance = new CalibrateCamera();
 
-    private int numberOfCalibratingFrames = 50;
-    private int currentNumberOfCalibratingFrames = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        placement = ground.GetComponent<PlaceAsset>();
         webcam = new VideoCapture(0);
-        if (webcam.IsOpened) {
-
+        if (webcam.IsOpened)
+        {
             webcam.ImageGrabbed += HandleWebcamQueryFrame;
             webcam.Start();
         }
 
-        
     }
 
     // Update is called once per frame
@@ -52,7 +55,7 @@ public class WebcamCapture : MonoBehaviour
             webcam.Grab();
             DisplayFrameOnPlane();
         }
-        
+
     }
 
     private void OnDestroy()
@@ -63,66 +66,7 @@ public class WebcamCapture : MonoBehaviour
             webcam.Dispose();
         }
     }
-
-    private void HandleWebcamQueryFrame(object sender, System.EventArgs e)
-    {
-        webcam.Retrieve(webcamCapture);
-        if(currentNumberOfCalibratingFrames <= numberOfCalibratingFrames)
-        {
-            (Mat, Mat) camParams = callibInstance.Calibrate(webcamCapture);
-            cameraMatrix = camParams.Item1;
-            distCoeffs = camParams.Item2;
-            poseEstimationInstance.CameraMatrix = cameraMatrix;
-            poseEstimationInstance.DistCoeffs = distCoeffs;
-            currentNumberOfCalibratingFrames += 1;
-
-            (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
-            poseEstimationInstance.MarkersCorners = markersInfo.Item1;
-            poseEstimationInstance.MarkerSize = 0.5f;
-            (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
-
-            Vector3 meanPosBoard = Vector3.zero;
-            for (int i = 0; i < transformationVector.Item1.Size.Height; ++i)
-            {
-                Mat rvec = transformationVector.Item1.Row(i);
-                Mat tvec = transformationVector.Item2.Row(i);
-                placement.createTerrain(rvec, tvec, markersInfo.Item2[i]);
-                (Vector3, Quaternion) transformMarker = placement.computeTransform(transformationVector.Item1.Row(i), transformationVector.Item2.Row(i));
-                meanPosBoard = transformMarker.Item1;
-            }
-
-            if (transformationVector.Item1.Size.Height > 0)
-            {
-                meanPosBoard /= transformationVector.Item1.Size.Height;
-            }
-
-            Camera.main.transform.position = meanPosBoard + new Vector3(0,400,0);
-
-            
-
-        }
-        else
-        {
-            (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
-            poseEstimationInstance.MarkersCorners = markersInfo.Item1;
-            poseEstimationInstance.MarkerSize = 0.5f;
-            (Mat, Mat) transformationVector = poseEstimationInstance.Estimate();
-
-            for(int i = 0; i < transformationVector.Item1.Size.Height; ++i)
-            {
-                Mat rvec = transformationVector.Item1.Row(i);
-                Mat tvec = transformationVector.Item2.Row(i);
-                ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec, tvec, 0.5f);
-
-                placement.displayAsset(rvec, tvec, markersInfo.Item2[i], scale);
-                //Debug.Log(markersInfo.Item2[i]);
-            }
-        }
-
-        //System.Threading.Thread.Sleep(50);
-
-        
-    }
+    
 
     private void DisplayFrameOnPlane()
     {
@@ -138,5 +82,87 @@ public class WebcamCapture : MonoBehaviour
 
         webcamScreen.texture = tex;
 
+    }
+
+    private ((Mat, Mat), VectorOfInt) estimatepos()
+    {
+        webcam.Retrieve(webcamCapture);
+
+        //plateaux
+        (Mat, Mat) camParams = callibInstance.Calibrate(webcamCapture);
+        cameraMatrix = camParams.Item1;
+        distCoeffs = camParams.Item2;
+        poseEstimationInstance.CameraMatrix = cameraMatrix;
+        poseEstimationInstance.DistCoeffs = distCoeffs;
+
+        (VectorOfVectorOfPointF, VectorOfInt) markersInfo = markerDetectionInstance.Detect(webcamCapture);
+        poseEstimationInstance.MarkersCorners = markersInfo.Item1;
+        poseEstimationInstance.MarkerSize = 0.5f;
+        return (poseEstimationInstance.Estimate(scale), markersInfo.Item2);
+    }
+
+    private void HandleWebcamQueryFrame(object sender, System.EventArgs e)
+    {
+
+        ((Mat, Mat), VectorOfInt) temp = estimatepos();
+        (Mat, Mat) transformationVector = temp.Item1;
+        VectorOfInt markersInfo = temp.Item2;
+
+        //marqueurs
+        for (int i = 0; i < transformationVector.Item1.Size.Height; ++i)
+        {
+            Mat rvec2 = transformationVector.Item1.Row(i);
+            Mat tvec2 = transformationVector.Item2.Row(i);
+            ArucoInvoke.DrawAxis(webcamCapture, cameraMatrix, distCoeffs, rvec2, tvec2, 0.5f);
+        
+            placement.displayAsset(rvec2, tvec2, meanPosBoard, markersInfo[i]);
+            
+        }
+        
+    }
+
+    public void createGround()
+    {
+        ((Mat, Mat), VectorOfInt) temp = estimatepos();
+        (Mat, Mat) transformationVector = temp.Item1;
+        VectorOfInt markersInfo = temp.Item2;
+
+        //calibrate ground during 50 frames
+        int numberOfCalibratingFrames = 50;
+        int currentNumberOfCalibratingFrames = 0;
+        CreateGround creationPt = ground.GetComponent<CreateGround>();
+        while (currentNumberOfCalibratingFrames <= numberOfCalibratingFrames)
+        {
+            temp = estimatepos();
+            transformationVector = temp.Item1;
+            markersInfo = temp.Item2;
+
+            for (int i = 0; i < transformationVector.Item1.Size.Height; ++i)
+            {
+                creationPt.modifyGroundPoint(transformationVector.Item1.Row(i), transformationVector.Item2.Row(i), markersInfo[i]);
+            }
+            currentNumberOfCalibratingFrames++;
+        }
+
+        //position of unity camera = mean of all of the point
+        
+        for (int i = 0; i < transformationVector.Item2.Size.Height; ++i)
+        {
+            Vector3 localPos;
+            localPos.x = float.Parse(transformationVector.Item2.Row(i).GetData().GetValue(0, 0, 0).ToString());
+            localPos.y = -float.Parse(transformationVector.Item2.Row(i).GetData().GetValue(0, 0, 1).ToString());
+            localPos.z = float.Parse(transformationVector.Item2.Row(i).GetData().GetValue(0, 0, 2).ToString());
+            meanPosBoard += Camera.main.transform.TransformPoint(localPos);
+            //rotBoard = transformationVector.Item1.Row(i);
+        }
+        if (transformationVector.Item1.Size.Height > 0)
+        {
+            meanPosBoard /= transformationVector.Item1.Size.Height;
+        }
+
+        //Debug.Log(meanPosBoard);
+        creationPt.recenter(meanPosBoard);
+        //Camera.main.transform.position = meanPosBoard + new Vector3(0, 100, 0);
+        Camera.main.transform.LookAt(ground.transform.position);
     }
 }

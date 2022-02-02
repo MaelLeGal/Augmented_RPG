@@ -11,19 +11,15 @@ using Emgu.CV.Util;
 public class CalibrateCamera
 {
 
-    private VectorOfVectorOfPointF allCharucoCorners = new VectorOfVectorOfPointF();
-    private VectorOfInt allCharucoIds = new VectorOfInt();
+    //private VectorOfVectorOfPointF allCharucoCorners = new VectorOfVectorOfPointF();
+    //private VectorOfInt allCharucoIds = new VectorOfInt();
 
-    private int numberOfCalibratingFrames = 250;
-    private int currentNumberOfCalibratingFrames = 0;
-    public CalibrateCamera()
-    {
-
-    }
 
     public (Mat, Mat) Calibrate(Mat image)
     {
-        /*System.Drawing.Size imgSize = new System.Drawing.Size(500, 500);
+        /* //calibrate with charuco method
+        
+        System.Drawing.Size imgSize = new System.Drawing.Size(500, 500);
 
         CharucoBoard board = new CharucoBoard(7, 5, 0.2f, 0.03f, new Dictionary(Dictionary.PredefinedDictionaryName.Dict6X6_250));
 

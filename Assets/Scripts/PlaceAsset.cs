@@ -12,13 +12,18 @@ using Emgu.CV.Util;
 public class PlaceAsset : MonoBehaviour
 {
     public List<GameObject> listObject;
-    public Material terrainMaterial;
+    public int scaleProps = 1;
     private Dictionary<int, GameObject> alreadyInPlace = new Dictionary<int, GameObject>();
 
-    Dictionary dictMarkers = new Dictionary(Dictionary.PredefinedDictionaryName.Dict6X6_250);
-
     private GameObject TerrainObj;
+    void Start()
+    {
+        TerrainObj = gameObject;
+    }
 
+
+    /* Old placement of the ground
+    public Material terrainMaterial;
     public void createTerrain(Mat rotvectors, Mat transvectors, int markerID)
     {
         (Vector3, Quaternion) transformAsset = computeTransform(rotvectors, transvectors);
@@ -38,10 +43,11 @@ public class PlaceAsset : MonoBehaviour
         worldPos.y = 1f;
 
         TerrainObj.transform.position = worldPos;
-        TerrainObj.transform.localScale = Vector3.one * 80;
+        TerrainObj.transform.localScale = Vector3.one * scaleProps;
         TerrainObj.name = "TerrainObj";
 
-        /*TerrainData _TerrainData = new TerrainData();
+        /*
+        TerrainData _TerrainData = new TerrainData();
 
         Debug.Log(_TerrainData);
 
@@ -71,9 +77,11 @@ public class PlaceAsset : MonoBehaviour
         TerrainObj.transform.position = worldPos;
         TerrainObj.transform.rotation = worldRot;
 
-        //GameObject _Terrain = Terrain.CreateTerrainGameObject(_TerrainData);*/
+        //GameObject _Terrain = Terrain.CreateTerrainGameObject(_TerrainData);
 
     }
+    */
+
 
 
     public void displayAssetInWorldAR(Mat rotvectors, Mat transvectors, int marqueurID)
@@ -96,18 +104,18 @@ public class PlaceAsset : MonoBehaviour
         localPos.y = -float.Parse(transvectors.GetData().GetValue(0, 0, 1).ToString());
         localPos.z = float.Parse(transvectors.GetData().GetValue(0, 0, 2).ToString());
 
-        Vector3 worldPos = transform.TransformPoint(localPos);
+        Vector3 worldPos = Camera.main.transform.TransformPoint(localPos);
 
+        
         
         double flip = (double)rotvectors.GetData().GetValue(0, 0, 0);
         flip = -flip;
         rotvectors.GetData().SetValue(flip, 0, 0, 0);
         
-
+        
         Mat rotMatrix = new Mat();
         CvInvoke.Rodrigues(rotvectors, rotMatrix);
 
-        
         Vector3 forward;
         forward.x = float.Parse(rotMatrix.GetData().GetValue(2, 0).ToString());
         forward.y = float.Parse(rotMatrix.GetData().GetValue(2, 1).ToString());
@@ -120,50 +128,22 @@ public class PlaceAsset : MonoBehaviour
 
         forward.Normalize();
         up.Normalize();
-        
 
-        Quaternion rot = Quaternion.LookRotation(forward, up);
+        Debug.Log(forward);
 
-        rot *= Quaternion.Euler(0, 0, 180);
+        Quaternion rot = Quaternion.LookRotation(up, forward);
 
-        Quaternion worldRot = transform.rotation * rot;
+        //rot *= Quaternion.Euler(0, 0, 180);
+        //Quaternion worldRot = transform.rotation * rot;
 
-        return (worldPos, worldRot);
+        return (worldPos, rot);
     }
 
-    public void displayAsset(Mat rotvectors, Mat transvectors, int marqueurID, int scale)
+    public void displayAsset(Mat rotvectors, Mat transvectors, Vector3 posboard, int marqueurID)
     {
-
-        Vector3 localPos;
-        localPos.x = float.Parse(transvectors.GetData().GetValue(0, 0, 0).ToString());
-        localPos.y = -float.Parse(transvectors.GetData().GetValue(0, 0, 1).ToString());
-        localPos.z = float.Parse(transvectors.GetData().GetValue(0, 0, 2).ToString());
-
-        Vector3 worldPos = Camera.main.transform.TransformPoint(localPos);
-        
-        double flip = (double)rotvectors.GetData().GetValue(0, 0, 0);
-        flip = -flip;
-        rotvectors.GetData().SetValue(flip, 0, 0, 0);
-        
-
-        Mat rotMatrix = new Mat();
-        CvInvoke.Rodrigues(rotvectors, rotMatrix);
-
-        Vector3 forward;
-        forward.x = float.Parse(rotMatrix.GetData().GetValue(2, 0).ToString());
-        forward.y = float.Parse(rotMatrix.GetData().GetValue(2, 1).ToString());
-        forward.z = float.Parse(rotMatrix.GetData().GetValue(2, 2).ToString());
-
-        Vector3 up;
-        up.x = float.Parse(rotMatrix.GetData().GetValue(1, 0).ToString());
-        up.y = float.Parse(rotMatrix.GetData().GetValue(1, 1).ToString());
-        up.z = float.Parse(rotMatrix.GetData().GetValue(1, 2).ToString());
-
-        Quaternion rot = Quaternion.LookRotation(forward, up);
-
-        rot *= Quaternion.Euler(0, 0, 180);
-
-        Quaternion worldrot = Camera.main.transform.rotation * rot;
+        (Vector3, Quaternion) transformAsset = GetComponent<PlaceAsset>().computeTransform(rotvectors, transvectors);
+        Vector3 worldPos = transformAsset.Item1 - posboard;
+        Quaternion rot = transformAsset.Item2;
 
         if (alreadyInPlace.ContainsKey(marqueurID))
         {
@@ -173,11 +153,13 @@ public class PlaceAsset : MonoBehaviour
             alreadyInPlace[marqueurID].transform.rotation = Quaternion.Euler(0, worldrot.y, 0);
             alreadyInPlace[marqueurID].transform.localScale = new Vector3(scale, scale, scale);*/
 
-            alreadyInPlace[marqueurID].transform.position = localPos * scale;
-            alreadyInPlace[marqueurID].transform.rotation = rot;
+            alreadyInPlace[marqueurID].transform.position = worldPos;
+
+            //rot = new Quaternion(rot.x, rot.y, 0, 0);
+            //alreadyInPlace[marqueurID].transform.rotation = rot;
+
             //alreadyInPlace[marqueurID].transform.localScale = new Vector3(scale, scale, scale);
 
-            alreadyInPlace[marqueurID].transform.up = TerrainObj.transform.up;
         }
         else
         {
@@ -185,15 +167,16 @@ public class PlaceAsset : MonoBehaviour
             //Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
             /*obj.transform.position = new Vector3(worldPos.x, 1, worldPos.z);
             obj.transform.rotation = Quaternion.Euler(0,worldrot.y,0);
-            obj.transform.localScale = new Vector3(scale, scale, scale);
             alreadyInPlace.Add(marqueurID, Instantiate(obj));*/
 
-            obj.transform.position = localPos * scale;
-            obj.transform.rotation = rot;
-            //obj.transform.localScale = new Vector3(scale, scale, scale);
-            alreadyInPlace.Add(marqueurID, Instantiate(obj));
+            obj.transform.position = worldPos;
+            obj.transform.Rotate(Vector3.up, 90);
+            obj.transform.Rotate(Vector3.forward, (float)0);
+            obj.transform.Rotate(Vector3.right, (float)0);
+            //obj.transform.rotation = rot;
+            obj.transform.localScale = new Vector3(scaleProps, scaleProps, scaleProps);
 
-            obj.transform.up = TerrainObj.transform.up;
+            alreadyInPlace.Add(marqueurID, Instantiate(obj));
         }
     }
 }
