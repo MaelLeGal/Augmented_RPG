@@ -200,7 +200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437645240}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 10, z: -40}
+  m_LocalPosition: {x: 0, y: 250, z: 0}
   m_LocalScale: {x: 2.2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
@@ -374,7 +374,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 890116281}
-  - component: {fileID: 890116282}
   - component: {fileID: 890116280}
   - component: {fileID: 890116284}
   m_Layer: 0
@@ -397,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ground: {fileID: 1510102436}
+  scale: 20
   webcamScreen: {fileID: 1347318277}
   width: 200
   height: 200
@@ -408,26 +408,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 890116279}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -62.306625, y: 234.79282, z: -127.529205}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &890116282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 890116279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82117131e09464b4b82b37e809b29952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listObject: []
-  scaleProps: 1
 --- !u!33 &890116284
 MeshFilter:
   m_ObjectHideFlags: 0

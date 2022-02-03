@@ -170,6 +170,7 @@ public class PlaceAsset : MonoBehaviour
             alreadyInPlace.Add(marqueurID, Instantiate(obj));*/
 
             obj.transform.position = worldPos;
+            obj.transform.rotation = Quaternion.identity;
             obj.transform.Rotate(Vector3.up, 90);
             obj.transform.Rotate(Vector3.forward, (float)0);
             obj.transform.Rotate(Vector3.right, (float)0);
